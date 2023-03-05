@@ -51,29 +51,29 @@ app.post('/campgrounds' , catchAsync(async(req, res, next) => {
      
 }))
 
-app.get('/campgrounds/:id' , catchAsync(async(req, res) => {
+app.get('/campgrounds/:id' , catchAsync(async(req, res, next) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', { campground });
 }))
 
-app.get('/campgrounds/:id/edit', catchAsync(async(req, res) => {
+app.get('/campgrounds/:id/edit', catchAsync(async(req, res, next) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit' ,{ campground});
 }))
 
-app.put('/campgrounds/:id' , catchAsync(async( req, res) => {
+app.put('/campgrounds/:id' , catchAsync(async( req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground} );
     res.redirect(`/campgrounds/${campground._id}`);
 }))
 
-app.get('/makecampgrounds', catchAsync(async(req, res) => {
+app.get('/makecampgrounds', catchAsync(async(req, res ,next) => {
     const camp = new Campground({title: 'My Backyard' , description : 'Cheap Camping'})
     await camp.save();
     res.send(camp);
 }))
 
-app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
@@ -84,8 +84,9 @@ app.all('*', (req, res ,next) =>{
 })
 
 app.use((err, req, res , next) =>{
-    const { statusCode = 500 , message = 'Something went wrong'} = err;
-    res.status(statusCode).send(message);
+    const { statusCode = 500 } = err;
+    if(!err.message) err.message = 'Oh NO, Something Went Wrong!';
+    res.status(statusCode).render('error',{ err });
 })
 
 app.listen(3000, () => {
