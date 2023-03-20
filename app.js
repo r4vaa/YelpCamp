@@ -75,8 +75,8 @@ app.get('/fakeUser' , async(req, res) => {
 
 
 app.use('/', usersRoutes);
-app.use('/campgrounds' , campgroundsRoutes);
-app.use('/campgrounds/:id/reviews' , reviewsRoutes);
+app.use('/campgrounds', campgroundsRoutes);
+app.use('/campgrounds/:id/reviews', reviewsRoutes);
 
 app.get('/', (req, res) => {
     res.render('home')
@@ -91,6 +91,7 @@ app.use((err, req, res , next) =>{
     const { statusCode = 500 } = err;
     if(!err.message) err.message = 'Oh NO, Something Went Wrong!';
     res.status(statusCode).render('error',{ err });
+    
 })
 
 app.listen(3000, () => {
