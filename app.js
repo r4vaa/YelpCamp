@@ -1,3 +1,10 @@
+if(process.env.NODE_ENV !== 'production'){
+    require('dotenv').config()
+}
+
+console.log(process.env.SECRET);
+console.log(process.env.API_KEY);
+
 const express = require('express');
 const path =  require('path');
 const mongoose = require('mongoose');
@@ -11,10 +18,11 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+
 const usersRoutes = require('./routes/users')
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
+
 
 
 
