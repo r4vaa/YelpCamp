@@ -6,7 +6,8 @@ mapboxgl.accessToken = mapToken;
     center: [-103.5917, 40.6699],
     zoom: 3
 });
- 
+
+map.addControl(new mapboxgl.NavigationControl())
 
 
 map.on('load', () => {
