@@ -26,11 +26,13 @@ const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-// const dbUrl = process.env.DB_URL
-// '
+// const MongoDBStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
+const dbUrl = 'mongodb://127.0.0.1:27017/yelp-camp';
+
 mongoose.set('strictQuery', false);
     main().catch(err => console.log(err));
-    async function main() { await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
+    async function main() { await mongoose.connect(dbUrl, {
         useNewUrlParser: true,
         // useCreateIndex: true,
         useUnifiedTopology: true,
@@ -55,7 +57,20 @@ app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize({replaceWith: '_',}))
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+      secret: 'thisshouldbeabettersecret!',
+    },
+    touchAfter:24 * 60 * 60
+  })
+
+store.on('error', function (e) {
+    console.log('SESSION STORE ERROR',e)
+})
+
 const sessionConfig = {
+    store,
     name:'session',
     secret : 'thisshouldbeabettersecret!',
     resave : false,
