@@ -22,7 +22,7 @@ const multer  = require('multer')
 const usersRoutes = require('./routes/users')
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
-
+const mongoSanitize = require('express-mongo-sanitize');
 
 
 
@@ -39,13 +39,14 @@ mongoose.set('strictQuery', false);
     }
 const app =  express();
 
-app.engine('ejs',ejsMate);
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.engine('ejs',ejsMate)
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.urlencoded( { extended : true} ))
-app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'))
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(mongoSanitize({replaceWith: '_',}))
 
 const sessionConfig = {
     secret : 'thisshouldbeabettersecret!',
@@ -64,11 +65,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
 app.use((req, res, next) => {
+    console.log(req.query);
     // console.log(req.session);
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
