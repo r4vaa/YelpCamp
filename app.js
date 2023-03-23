@@ -26,11 +26,16 @@ const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-
-
+// const dbUrl = process.env.DB_URL
+// '
 mongoose.set('strictQuery', false);
     main().catch(err => console.log(err));
-    async function main() { await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
+    async function main() { await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
+        useNewUrlParser: true,
+        // useCreateIndex: true,
+        useUnifiedTopology: true,
+        // useFindAndModify: false
+    })
         .then(() => {
         console.log('Database Connected')
         })
@@ -162,3 +167,7 @@ app.use((err, req, res , next) =>{
 app.listen(3000, () => {
     console.log('Serving on Port 3000')
 })
+
+
+
+
